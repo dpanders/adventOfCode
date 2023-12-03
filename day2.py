@@ -52,7 +52,16 @@ class Game:
             if not set.setPossible(limits):
                 possible = False
         return(possible)
-        
+    def maxEachColor(self):
+        colorDict = {"red":0, "blue":0, "green":0}
+        for color in colorDict:
+            for set in self.sets:
+                if color in set.setDict:
+                    max = set.setDict[color]
+                    if colorDict[color] < max:
+                        colorDict[color] = max
+
+        return(colorDict)
     
 
 def main(argv=None):
@@ -94,7 +103,15 @@ def main(argv=None):
             total += game.id
     print(total)
 
-
+    # part 2
+    sum = 0
+    for game in gamesList:
+        maxEach = game.maxEachColor()
+        power = 1
+        for color in maxEach:
+            power *= int(maxEach[color])
+        sum += power
+    print (sum)
 
 
 
