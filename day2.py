@@ -1,99 +1,47 @@
 import sys
 import argparse
-import re
 
 
-numbersAsWords=["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
-numbersAsWordsBackwards=["orez", "eno","owt", "eerht", "ruof", "evif", "xis", "neves", "thgie", "enin"]
+def getId(line):
+    # assumes line is of the form:
+    # Game x: blah blahblah
+    tokens = line.split(":")
+    token = tokens[0].split()
+    return(int(token[1]))
 
-def getFirstNumber(line):
-    # go through the line and look for a number, store the location
-    # and store the value for later?
-    
-    firstNumber = None
-    firstPosition = None
-    for index in range(len(numbersAsWords)):
-        num = numbersAsWords[index]
-        pos = line.find(num)
-        if pos != -1:
-            if firstPosition is None:
-                firstPosition = pos
-                firstNumber = index
-            else:
-                if firstPosition > pos:
-                    firstPosition = pos
-                    firstNumber = index
-    
+def getSets(line):
+    tokens = line.split(": ")
+    setsStr = tokens[1]
+    sets = setsStr.split("; ")
+    return(sets)
 
-    m = re.search(r'[0-9]', line)
-    number = None
-    position = None
-    if m:
-        number = int(m.group(0))
-        position = m.start()
+def getSetDict(setStr):
+    setDict = {}
+    tokens = setStr.split(", ")
+    
+    for draws in tokens:
+        pairs = draws.split()
+        num = int(pairs[0])
+        col = pairs[1]
+        setDict[col] = num
+        
+    return(setDict)
 
-    if position is not None and firstPosition is not None:    
-        if position < firstPosition:
-            return (number)
-        else:
-            return (firstNumber)
-    elif position is not None:
-        return(number)
-    elif firstPosition is not None:
-        return(firstNumber)
-    else:
-        return(None)
-    
-    # go through the line and look for a number as a word, store the location 
-    # and store the value for later
-    
-    # compare, if the lower one is a number, return the string to char, if it is
-    # a number as a word, use the value stored from the if
-    
-def getSecondNumber(line):
-    # go through the line and look for a number, store the location
-    # and store the value for later?
-    line = line[::-1]
 
-    firstNumber = None
-    firstPosition = None
-    for index in range(len(numbersAsWordsBackwards)):
-        num = numbersAsWordsBackwards[index]
-        pos = line.find(num)
-        if pos != -1:
-            if firstPosition is None:
-                firstPosition = pos
-                firstNumber = index
-            else:
-                if firstPosition > pos:
-                    firstPosition = pos
-                    firstNumber = index
-    
-    m = re.search(r'[0-9]', line)
-    number = None
-    position = None
-    if m:
-        number = int(m.group(0))
-        position = m.start()
+# {"color": number}
+class Set:
+    def __init__(self, setDict):
+        self.setDict = setDict
 
-    if position is not None and firstPosition is not None:    
-        if position < firstPosition:
-            return (number)
-        else:
-            return (firstNumber)
-    elif position is not None:
-        return(number)
-    elif firstPosition is not None:
-        return(firstNumber)
-    else:
-        return(None)
-    
-    # go through the line and look for a number as a word, store the location 
-    # and store the value for later
-    
-    # compare, if the lower one is a number, return the string to char, if it is
-    # a number as a word, use the value stored from the if
-    
+
+class Game:
+    def __init__(self, id):
+        self.id = id
+        self.sets=[]
+    def addSet(self, set):
+        """ takes in a dictionary and adds it to self.sets"""
+        self.sets.append(Set)
+        
     
 
 def main(argv=None):
@@ -105,22 +53,32 @@ def main(argv=None):
     
     args = parser.parse_args()
     input=args.input
-    
-    total = 0
+
+    # list = [Game1, Game2, Game3, ...]
+    #   Game = [Set1, Set2, Set3, ...]
+    # 
+    # empty list of Games
+    # for each line
+        # get ID
+        # create a Game
+            # get rounds
+            # create each Round and add to Game
+    gamesList = []
     with open(input) as file:
         for line in file.readlines():
-            firstChar=getFirstNumber(line)
-            secondChar=getSecondNumber(line)
-            #print(firstChar,secondChar)
-            # print(type(firstChar))
-            # print(type(secondChar))
-            total+=firstChar*10+secondChar
-
-            # print (str(firstChar) + " " +str(secondChar)+" : "+ line)
-            
+            game = Game(getId(line))
+            for setStr in getSets(line):
+                setDict = getSetDict(setStr)
+                set = Set(setDict)
+                game.addSet(set)
+            gamesList.append(game)
     
+    # perform analysis:
+    # for each game, count those below a certain number 
+    total = 0
+    for game in gamesList:
+        total += game.id
     print(total)
-
 
 
 
