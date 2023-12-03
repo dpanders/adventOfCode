@@ -32,7 +32,12 @@ def getSetDict(setStr):
 class Set:
     def __init__(self, setDict):
         self.setDict = setDict
-
+    def setPossible(self, limits):
+        possible = True
+        for color in self.setDict:
+            if limits[color] < self.setDict[color]:
+                possible = False
+        return(possible)
 
 class Game:
     def __init__(self, id):
@@ -40,7 +45,13 @@ class Game:
         self.sets=[]
     def addSet(self, set):
         """ takes in a dictionary and adds it to self.sets"""
-        self.sets.append(Set)
+        self.sets.append(set)
+    def gamePossible(self, limits):
+        possible = True
+        for set in self.sets:
+            if not set.setPossible(limits):
+                possible = False
+        return(possible)
         
     
 
@@ -76,8 +87,11 @@ def main(argv=None):
     # perform analysis:
     # for each game, count those below a certain number 
     total = 0
+    # The Elf would first like to know which games would have been possible if the bag contained only 12 red cubes, 13 green cubes, and 14 blue cubes?
+    limits = {"red": 12, "green": 13, "blue": 14}
     for game in gamesList:
-        total += game.id
+        if game.gamePossible(limits):
+            total += game.id
     print(total)
 
 
