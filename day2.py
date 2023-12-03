@@ -104,6 +104,7 @@ def main(argv=None):
     print(total)
 
     # part 2
+    # find the max for each game and then multiple together and sum
     sum = 0
     for game in gamesList:
         maxEach = game.maxEachColor()

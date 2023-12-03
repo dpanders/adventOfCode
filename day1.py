@@ -100,6 +100,10 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv
 
+    # to run:
+    # python day1.py --input inputday1.txt
+    # or whatever "python" is on your system
+    
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", dest="input", type=str, default="no file")
     
