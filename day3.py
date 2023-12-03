@@ -14,8 +14,25 @@ def main(argv=None):
     args = parser.parse_args()
     input=args.input
 
+    fileArray = []
     with open(input) as file:
-        for line in file.readlines():
+        for lines in file.readlines():
+            nextRow = []
+            for line in lines:
+                for char in line:
+                    if char != '\n':
+                        nextRow.append(char)
+                    
+            # add each char to array column
+            fileArray.append(nextRow)
+    for rows in fileArray:
+        print (rows)
+#    print(fileArray)
+
+    print(fileArray[0][0])
+    print(fileArray[0][1])
+    print(fileArray[0][2])
+    
     
     # perform analysis:
 
