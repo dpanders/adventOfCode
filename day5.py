@@ -45,7 +45,6 @@ def main(argv=None):
         lines = file.readlines()
         inMap = False
         for line in lines:
-            print(line)
             if "map" in line:
                 map = Map(line.split()[0])
                 inMap = True
@@ -59,17 +58,13 @@ def main(argv=None):
                 inMap = False
         if inMap:
             MapList.append(map)
-    for map in MapList:
-        print(f"{map.name} input {map.input} out {map.out} range {map.range} inUpper {map.inUpper} shift {map.shift}")
     
     locationList = []
     for seed in seeds:
         output = seed
         for map in MapList:
             output = map.map2(output)
-            print(output)
         locationList.append((seed,output))
-        print(f"seed {seed} output {output}")
 
     lowestLocation = locationList[0][1]
     lowestSeed = 0
@@ -78,7 +73,41 @@ def main(argv=None):
             lowestLocation = location
             lowestSeed = seed
     
-    # corre
+    # part 1
+    print(lowestSeed, lowestLocation)
+
+    # part 
+    part2Seeds = []
+    pair = True
+    print(seeds)
+    print("part2")
+    for x, y in zip(seeds, seeds[1:]):
+        # print("*")
+        if pair:
+            print(range(int(y)))
+            for i in range(int(y)):
+                # print("@")
+                part2Seeds.append(int(x)+i)
+            pair = False
+        else: 
+            pair = True
+    print('part2 search')
+    locationList = []
+    for seed in part2Seeds:
+        # print("*",end="")
+        output = seed
+        for map in MapList:
+            output = map.map2(output)
+        locationList.append((seed,output))
+
+    lowestLocation = locationList[0][1]
+    lowestSeed = 0
+    print("part2 location search")
+    for seed, location in locationList:
+        if location < lowestLocation:
+            lowestLocation = location
+            lowestSeed = seed
+    
     print(lowestSeed, lowestLocation)
 
 
