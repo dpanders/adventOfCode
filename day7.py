@@ -3,6 +3,8 @@ import argparse
 import re
 
 CARDRANK = {'2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, 'T':10, 'J':11, 'Q': 12, 'K':13, 'A':14}
+CARDRANK2 = {'J':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, 'T':10, 'Q': 12, 'K':13, 'A':14}
+CARDS = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'Q', 'K', 'A']
 
 class Hand:
     def __init__(self, hand, bid):
@@ -10,7 +12,8 @@ class Hand:
         self.bid = bid
         self.binScore = scoreHand(hand)
         self.handVal = handVal(hand)
-    
+        self.binScore2 = scoreHand2(hand)
+        self.handVal2 = handVal2(hand)
 
 class Rank:
     def __init__(self):
@@ -18,6 +21,10 @@ class Rank:
 
 def handVal(hand):
     value = CARDRANK[hand[0]] * 14**4 + CARDRANK[hand[1]] * 14**3 + CARDRANK[hand[2]] * 14**2 + CARDRANK[hand[3]] * 14 + CARDRANK[hand[4]]   
+    return(value) 
+
+def handVal2(hand):
+    value = CARDRANK2[hand[0]] * 14**4 + CARDRANK2[hand[1]] * 14**3 + CARDRANK2[hand[2]] * 14**2 + CARDRANK2[hand[3]] * 14 + CARDRANK2[hand[4]]   
     return(value) 
 
 def scoreHand(hand):
@@ -64,6 +71,17 @@ def scoreHand(hand):
     else:
         return (1)
 
+def scoreHand2(hand):
+    score = scoreHand(hand)
+    
+    if 'J' in hand:
+        for joker in CARDS:
+            newScore = scoreHand(hand.replace("J", joker))
+            if newScore > score:
+                score = newScore
+    return(score)
+
+    
 
 def compareEachCard(hand1, hand2):
     for c1, c2 in zip(hand1, hand2):
@@ -103,9 +121,17 @@ def main(argv=None):
     list3 = []
     list2 = []
     list1 = []
+    list27 = []
+    list26 = []
+    list25 = []
+    list24 = []
+    list23 = []
+    list22 = []
+    list21 = []
+    
     # totList = [list7, list6, list5, list4, list3, list2, list1]
     totList = [list1, list2, list3, list4, list5, list6, list7]
-
+    totList2 = [list21, list22, list23, list24, list25, list26, list27]
     with open(input) as file:
         lines = file.readlines()
         for line in lines:
@@ -126,16 +152,44 @@ def main(argv=None):
                     list2.append(hand)
                 case 1:
                     list1.append(hand)
+            match hand.binScore2:
+                case 7:
+                    list27.append(hand)
+                case 6:
+                    list26.append(hand)
+                case 5:
+                    list25.append(hand)
+                case 4:
+                    list24.append(hand)
+                case 3:
+                    list23.append(hand)
+                case 2:
+                    list22.append(hand)
+                case 1:
+                    list21.append(hand)
+
         
     total = 0
     page = 1
     for list in totList:
         list.sort(key=lambda x: x.handVal)
         for i, element in enumerate(list):
-            print(element.hand)
+            # print(element.hand)
             total += (i+page) * element.bid
         page += len(list)
     print(total)
+
+        
+    total = 0
+    page = 1
+    for list in totList2:
+        list.sort(key=lambda x: x.handVal2)
+        for i, element in enumerate(list):
+            # print(element.hand)
+            total += (i+page) * element.bid
+        page += len(list)
+    print(total)
+
 if __name__ == '__main__':
     sys.exit(main())
 
