@@ -28,6 +28,11 @@ class Sequence:
             return(self.seq[-1] + self.nextNode.nextVal())
         else:
             return(self.seq[-1])
+    def firstVal(self):
+        if self.nextNode is not None:
+            return(self.seq[0] - self.nextNode.firstVal())
+        else:
+            return(0)
 
 
 def main(argv=None):
@@ -48,13 +53,15 @@ def main(argv=None):
     
     # part 1
     sum = 0
+    firstSum = 0
     for seq in sequences:
         # print(seq)
         seqNode = Sequence(seq)
         # print(seqNode.nextVal())
         sum += seqNode.nextVal()
-
+        firstSum += seqNode.firstVal()
     print(sum) 
+    print(firstSum)
 
 
 
