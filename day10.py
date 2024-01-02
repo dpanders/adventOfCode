@@ -28,7 +28,7 @@ def getDirs(char):
         case 'F':
             ret = {"east":"south", "south":"east"}
         case 'S':
-            ret = {"east":"south", "south":"east"}
+            ret = {"east":"east", "south":"south", "west":"west", "north":"north"}
         case '.':
             ret = None
 
@@ -63,35 +63,55 @@ def main(argv=None):
         
     # starting with S coordinate
     # go cw and count
-    
-    inDirList = ['east', 'south']
-    paths = []
-    for inDir in inDirList:
-        first = True
-        steps = 0
-        prevSquare = square(map[row][col], row, col, None)
-        paths.append(prevSquare)
-        prevSquare.stepsCW = steps
-        while map[row][col] != 'S' or first:
-            first = False
-            newSquare = square(map[row][col], row, col, prevSquare)
-            steps += 1
-            newSquare.stepsCW = steps
-            match newSquare.dirs[inDir]:
+    curPoints = [[row, col], [row, col]]
+    curDir = []
+    firstSteps = {}
+    if row != 0:
+        firstSteps["south"] = [row-1, col]
+    if row != len(map):
+        firstSteps["north"] = [row+1, col]
+    if col != 0:
+        firstSteps["east"] = [row, col-1]
+    if col != len(map):
+        firstSteps["west"] = [row, col+1]
+
+    first = True
+    for step in firstSteps:
+        row = firstSteps[step][0]
+        col = firstSteps[step][1]
+        char = map[row][col]
+        directions = getDirs(char)
+        if directions:
+            if step in directions:
+                curDir.append(getDirs('S')[step])
+                if first:
+                    curPoints[0] = [row, col]
+                    first = False
+                else:
+                    curPoints[1] = [row, col]
+
+
+    # current position on step 1, curDir set properly
+
+    steps = 1
+    while ((curPoints[0][0] != curPoints[1][0]) or (curPoints[0][1] != curPoints[1][1])):
+        steps += 1
+        # print(steps)
+        for i, dir in enumerate(curDir):
+            match getDirs(map[curPoints[i][0]][curPoints[i][1]])[dir]:
                 case "north":
-                    row -= 1
-                    inDir = "south"
+                    curPoints[i][0] -= 1
+                    curDir[i] = "south"
                 case "east":
-                    col += 1
-                    inDir = "west"
+                    curPoints[i][1] += 1
+                    curDir[i] = "west"
                 case "south":
-                    row += 1
-                    inDir = "north"
+                    curPoints[i][0] += 1
+                    curDir[i] = "north"
                 case "west":
-                    col -= 1
-                    inDir = "east"
-            prevSquare = newSquare
-            print(col, row, steps)
+                    curPoints[i][1] -= 1
+                    curDir[i] = "east"
+    print(steps)
 
 
     # go CCW and count
